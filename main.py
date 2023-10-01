@@ -13,6 +13,10 @@ def main():
     # 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
     users = get_user_data(stream_urls)
 
+    # デバック用
+    for i, user in enumerate(users):
+        print(f"{i+1}. {user}")
+
     # ユーザーID・ユーザーをDBに登録、すでにDBに登録されている場合は、登録しない
 
 
@@ -69,47 +73,35 @@ def get_user_data(stream_urls):
         # BeautifulSoupオブジェクトを作成
         soup = BeautifulSoup(response.text, 'html.parser')
 
+        user = {}
+
         # ユーザーID
         user_id_element = soup.select_one('.user-name').get('href')
         user_id = user_id_element.strip() if user_id_element else "Not Found"
-
-        # user_idから数字のみを抽出
-        matched = re.search(r'\d+', user_id)
-        if matched:
-            user_id_number = matched.group(0)  # 最初にマッチした数字列を取得
-        else:
-            user_id_number = "Not Found"
-
-        users[i]['user_id'] = user_id_number
+        matched = re.search(r'\d+', user_id) # user_idから数字のみを抽出
+        user['user_id'] = matched.group(0) if matched else "Not Found"
 
         # ユーザー名
         user_name_element = soup.select_one('.name')
-        user_name = user_name_element.text.strip() if user_name_element else "Not Found"
-        users[i]['user_name'] = user_name
+        user['user_name']  = user_name_element.text.strip() if user_name_element else "Not Found"
 
         # コミュニティID
         community_id_element = soup.select_one('.___name-label___iW8g3').get('href')
         community_id = community_id_element.strip() if community_id_element else "Not Found"
+        matched = re.search(r'\d+', community_id) # community_idから数字のみを抽出
+        user['community_id'] = matched.group(0) if matched else "Not Found"
 
-        # community_idから数字のみを抽出
-        matched = re.search(r'\d+', community_id)
-        if matched:
-            community_id_number = matched.group(0)  # 最初にマッチした数字列を取得
-        else:
-            community_id_number = "Not Found"
-
-        users[i]['community_id'] = community_id_number
-
-        # 結果を表示
-        # print(f"User ID: {user_id_number}")
-        # print(f"User Name: {user_name}")
-        # print(f"Community ID: {community_id_number}")
+        # user ディクショナリを users リストに追加
+        # print(user)
+        users.append(user)
 
         # return stream_urls
 
     # デバック用
-    for i, user in enumerate(users):
-        print(f"{i+1}. {user}")
+    # for i, user in enumerate(users):
+    #     print(f"{i+1}. {user}")
+
+    return users
 
 # --- 処理実行 ---
 if __name__ == "__main__":

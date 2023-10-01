@@ -95,8 +95,6 @@ def get_user_data(stream_urls):
         # print(user)
         users.append(user)
 
-        # return stream_urls
-
     # デバック用
     # for i, user in enumerate(users):
     #     print(f"{i+1}. {user}")

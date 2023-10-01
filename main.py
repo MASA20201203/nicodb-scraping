@@ -4,31 +4,37 @@ import re
 
 def main():
     # ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
-    stream_urls = get_streaming_url()
+    stream_urls = get_streaming_urls()
 
     # デバック用
     # for i, stream_url in enumerate(stream_urls):
     #     print(f"{i+1}. {stream_url}")
 
     # 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
-    users = get_user_data(stream_urls)
+    users = get_users(stream_urls)
 
     # デバック用
     for i, user in enumerate(users):
         print(f"{i+1}. {user}")
 
-    # ユーザーID・ユーザーをDBに登録、すでにDBに登録されている場合は、登録しない
-
+    # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない
+    register_users(users)
 
     # コミュニティURLから放送履歴URLを取得
+    # get_streaming_history_urls(
+
     # 放送履歴URLから前日分の配信URLを取得
+    # get_streaming_url_from_history(
+
     # 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
+    # get_streaming(
+
     # 1月分の配信データを集計して表示する（Next.js？）
 
 # --- 処理定義 ---
 
 # ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
-def get_streaming_url():
+def get_streaming_urls():
 
     # ニコニコ生放送のランキングページURL
     url = "https://live.nicovideo.jp/ranking"
@@ -60,7 +66,7 @@ def get_streaming_url():
     return stream_urls
 
 # 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
-def get_user_data(stream_urls):
+def get_user(stream_urls):
 
     users = []
 

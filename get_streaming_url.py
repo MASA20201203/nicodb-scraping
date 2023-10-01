@@ -24,8 +24,9 @@ soup = BeautifulSoup(response.text, 'html.parser')
 
 # 配信タイトルが格納されている要素を探してリストに追加
 titles = []
-# for title_div in soup.select('.Mg-btm0px.Pd-right10px.Pd-left10px.H-fix2col .Fz-m.Fw-b'):
-for title_div in soup.select('.___rk-program-card-detail-title___gJhRF'):
+for index, title_div in enumerate(soup.select('.___rk-program-card-detail-title___gJhRF')):
+    if index >= 50:  # 50回繰り返したらループを抜ける（ユーザー放送のデータのみ取得）
+        break
     titles.append(title_div.text.strip())
 
 # 取得した配信タイトルを出力

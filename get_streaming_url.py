@@ -29,6 +29,15 @@ for index, title_div in enumerate(soup.select('.___rk-program-card-detail-title_
         break
     titles.append(title_div.text.strip())
 
+    # print("--- title_div ---")
+    # print(title_div)
+
+    # hrefの取得
+    href = title_div.get('href')  # title_div は既に a タグであるため、直接 get('href') が使える
+    stream_url = href.split('?')[0] # URLのクエリパラメータを除去
+    if stream_url is not None:
+        print(f"URL: {stream_url}")
+
 # 取得した配信タイトルを出力
 print("ニコニコ生放送のランキングページのタイトル一覧")
 for i, title in enumerate(titles):

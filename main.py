@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+
 def main():
     # ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
     stream_urls = get_streaming_urls()
@@ -18,7 +19,7 @@ def main():
         print(f"{i+1}. {user}")
 
     # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない
-    register_users(users)
+    # register_users(users)
 
     # コミュニティURLから放送履歴URLを取得
     # get_streaming_history_urls(
@@ -34,6 +35,8 @@ def main():
 # --- 処理定義 ---
 
 # ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
+
+
 def get_streaming_urls():
 
     # ニコニコ生放送のランキングページURL
@@ -53,8 +56,9 @@ def get_streaming_urls():
             break
 
         # hrefの取得
-        href = title_div.get('href')  # title_div は既に a タグであるため、直接 get('href') が使える
-        stream_url = href.split('?')[0] # URLのクエリパラメータを除去
+        # title_div は既に a タグであるため、直接 get('href') が使える
+        href = title_div.get('href')
+        stream_url = href.split('?')[0]  # URLのクエリパラメータを除去
         if stream_url is not None:
             # print(f"URL: {stream_url}")
             stream_urls.append(stream_url)
@@ -66,7 +70,9 @@ def get_streaming_urls():
     return stream_urls
 
 # 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
-def get_user(stream_urls):
+
+
+def get_users(stream_urls):
 
     users = []
 
@@ -84,17 +90,19 @@ def get_user(stream_urls):
         # ユーザーID
         user_id_element = soup.select_one('.user-name').get('href')
         user_id = user_id_element.strip() if user_id_element else "Not Found"
-        matched = re.search(r'\d+', user_id) # user_idから数字のみを抽出
+        matched = re.search(r'\d+', user_id)  # user_idから数字のみを抽出
         user['user_id'] = matched.group(0) if matched else "Not Found"
 
         # ユーザー名
         user_name_element = soup.select_one('.name')
-        user['user_name']  = user_name_element.text.strip() if user_name_element else "Not Found"
+        user['user_name'] = user_name_element.text.strip(
+        ) if user_name_element else "Not Found"
 
         # コミュニティID
-        community_id_element = soup.select_one('.___name-label___iW8g3').get('href')
+        community_id_element = soup.select_one(
+            '.___name-label___iW8g3').get('href')
         community_id = community_id_element.strip() if community_id_element else "Not Found"
-        matched = re.search(r'\d+', community_id) # community_idから数字のみを抽出
+        matched = re.search(r'\d+', community_id)  # community_idから数字のみを抽出
         user['community_id'] = matched.group(0) if matched else "Not Found"
 
         # user ディクショナリを users リストに追加
@@ -106,6 +114,7 @@ def get_user(stream_urls):
     #     print(f"{i+1}. {user}")
 
     return users
+
 
 # --- 処理実行 ---
 if __name__ == "__main__":

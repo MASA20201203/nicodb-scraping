@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import mysql.connector
 
 
 def main():
@@ -18,8 +19,9 @@ def main():
     for i, user in enumerate(users):
         print(f"{i+1}. {user}")
 
-    # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない
-    # register_users(users)
+    # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
+    for user in users:
+        register_users(user['user_id'], user['user_name'])
 
     # コミュニティURLから放送履歴URLを取得
     # get_streaming_history_urls(
@@ -34,9 +36,8 @@ def main():
 
 # --- 処理定義 ---
 
+
 # ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
-
-
 def get_streaming_urls():
 
     # ニコニコ生放送のランキングページURL
@@ -69,9 +70,8 @@ def get_streaming_urls():
 
     return stream_urls
 
+
 # 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
-
-
 def get_users(stream_urls):
 
     users = []
@@ -114,6 +114,41 @@ def get_users(stream_urls):
     #     print(f"{i+1}. {user}")
 
     return users
+
+
+# ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
+def register_users(user_id, user_name):
+
+    # デバック用
+    # print("--- user_info ---")
+    # print(user_id, user_name)
+
+    # MySQLへの接続を確立
+    cnx = mysql.connector.connect(
+        host='localhost',
+        user='test_user',
+        password='test',
+        database='nicodb_db'
+    )
+
+    # カーソルオブジェクトを作成
+    cursor = cnx.cursor()
+
+    # SQL文を実行
+    sql = """
+    INSERT INTO users (id, name)
+    VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE name = VALUES(name);
+    """
+
+    cursor.execute(sql, (user_id, user_name))
+
+    # 変更をコミット
+    cnx.commit()
+
+    # 接続を閉じる
+    cursor.close()
+    cnx.close()
 
 
 # --- 処理実行 ---

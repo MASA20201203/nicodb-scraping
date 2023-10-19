@@ -1,5 +1,103 @@
 # ニコ生クリ奨ランキングのデータ取得
 
+## ユーザー ID・ユーザー名を DB に登録、すでに DB に登録されている場合は、登録しない
+
+### ChatGPT への質問
+
+```
+
+取得したユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しないとしたいのですが、どのようにしたらよいでしょうか。
+また、ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新したいです。
+
+DBはMySQLを使用しています。
+
+↓
+
+```
+
+### DB 情報の確認
+
+### MySQL サーバーの起動
+
+```
+sudo service mysql status
+sudo service mysql start
+```
+
+### MySQL コマンド
+
+```
+sudo mysql -u root -p
+show databases;
+use nicodb_db;
+show tables;
+SHOW COLUMNS FROM テーブル名;
+SHOW TABLE STATUS;
+
+SELECT User, Host FROM mysql.user;
+
+test_user
+test
+```
+
+### テーブル作成
+
+#### アドバイス
+
+```
+決めること
+データ型
+プライマリーキー
+ユーザーテーブルはBIGINT（ビッグイント）で
+キャラ型イント型日時型だけでいいよ
+
+めっちゃ悩ましいのですが、テーブルの中のユーザーIDってニコニコのIDじゃないですか、それとは別に内部IDを作っておいたほうがいいのかなって
+```
+
+#### ChatGPT へのプロンプト
+
+- users テーブル
+
+```
+usersテーブルを作成しようとしています。
+下記テーブル項目を使用する予定なのですが、mysqlでテーブルを作成する場合、どのように作成したらよいでしょうか。
+
+* テーブル項目
+id: ユーザーID（例:128551563）
+name: ユーザー名
+created_at: 登録日時
+updated_at: 更新日時
+```
+
+```
+CREATE TABLE users (
+  id INT PRIMARY KEY,  -- ユーザーID（自動インクリメント）
+  name VARCHAR(255) NOT NULL,         -- ユーザー名（NULL不可）
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 登録日時（デフォルトは現在のタイムスタンプ）
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 更新日時（デフォルトは現在のタイムスタンプ、更新時に自動で更新）
+);
+```
+
+```
+mysql> show columns from users;
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field      | Type         | Null | Key | Default           | Extra                                         |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id         | int          | NO   | PRI | NULL              |                                               |
+| name       | varchar(255) | NO   |     | NULL              |                                               |
+| created_at | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updated_at | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+4 rows in set (0.01 sec)
+```
+
+### 登録データ確認
+
+```
+select count(*) from users;
+select * from users;
+```
+
 ## 配信ページの URL からユーザー ID・ユーザー名とコミュニティ URL を取得
 
 ### 返り値の設定
@@ -50,14 +148,14 @@ def get_user_data(stream_urls):
         print(f"User ID: {user_id_number}")
         print(f"User Name: {user_name}")
         print(f"Community ID: {community_id_number}")
-````
 
 ```
 
+````
 
 ### URL からユーザー ID を抽出
 
-```
+````
 
 下記コードで下記 user_id の値が取得できました。
 user_id の値の中から数字のみを抽出したいです。
@@ -67,7 +165,7 @@ user_id の値の中から数字のみを抽出したいです。
 # ユーザーID
 user_id_element = soup.select_one('.user-name').get('href')
 user_id = user_id_element.strip() if user_id_element else "Not Found"
-```
+````
 
 ```user_id
 https://www.nicovideo.jp/user/121419314/live_programs?ref=watch_user_information

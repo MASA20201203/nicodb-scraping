@@ -12,7 +12,7 @@ https://com.nicovideo.jp/live/co[community_id]?com_header=1
 https://com.nicovideo.jp/live/co[community_id]
 ```
 
-### communities
+### communities テーブル・user_community テーブル作成
 
 ```
 下記テーブル項目を使用する予定なのですが、mysqlでテーブルを作成する場合、どのように作成したらよいでしょうか。
@@ -61,6 +61,18 @@ CREATE TABLE user_community (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (community_id) REFERENCES communities(id)
 );
+```
+
+### 既存データのバックアップ・削除
+
+```
+mysqldump -u test_user -p nicodb_db users > users_20231021.sql
+
+SELECT @@foreign_key_checks;
+set foreign_key_checks = 0;
+TRUNCATE TABLE users;
+set foreign_key_checks = 1;
+SELECT @@foreign_key_checks;
 ```
 
 ## ユーザー ID・ユーザー名を DB に登録、すでに DB に登録されている場合は、登録しない

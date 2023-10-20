@@ -23,7 +23,8 @@ def main():
 
     # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
     for user in users:
-        register_users(user['user_id'], user['user_name'])
+        register_users(user['user_id'], user['user_name'],
+                       user['community_id'])
 
     # コミュニティURLから放送履歴URLを取得
     # get_streaming_history_urls(
@@ -119,7 +120,7 @@ def get_users(stream_urls):
 
 
 # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
-def register_users(user_id, user_name):
+def register_users(user_id, user_name, community_id):
 
     # デバック用
     # print("--- user_info ---")
@@ -143,14 +144,53 @@ def register_users(user_id, user_name):
     # カーソルオブジェクトを作成
     cursor = cnx.cursor()
 
-    # SQL文を実行
+    # usersテーブルを更新
     sql = """
     INSERT INTO users (id, name)
     VALUES (%s, %s)
     ON DUPLICATE KEY UPDATE name = VALUES(name);
     """
 
+    # # デバック用
+    # print('--- users ---')
+    # print(user_id, user_name)
+
     cursor.execute(sql, (user_id, user_name))
+
+    # communitiesテーブルを更新
+    sql = """
+    INSERT INTO communities (id)
+    VALUES (%s)
+    ON DUPLICATE KEY UPDATE id=id;
+    """
+
+    # デバック用
+    # print('--- communities ---')
+    # print(type(community_id))
+    # print(community_id)
+
+    cursor.execute(sql, (community_id, ))
+
+    # user_communityテーブルを更新
+
+    # user_communityテーブルに既に同じ組み合わせが存在するか確認
+    check_sql = """
+    SELECT COUNT(*) FROM user_community WHERE user_id = %s AND community_id = %s
+    """
+
+    cursor.execute(check_sql, (user_id, community_id))
+    if cursor.fetchone()[0] == 0:
+
+        sql = """
+        INSERT INTO user_community (user_id, community_id)
+        VALUES (%s, %s)
+        """
+
+        # デバック用
+        # print('--- user_community ---')
+        # print(user_id, community_id)
+
+        cursor.execute(sql, (user_id, community_id))
 
     # 変更をコミット
     cnx.commit()

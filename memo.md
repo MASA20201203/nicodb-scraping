@@ -63,7 +63,11 @@ CREATE TABLE user_community (
 );
 ```
 
-### 既存データのバックアップ・削除
+user_community テーブル
+111, 333
+222, 333
+
+### 既存 users データのバックアップ・削除
 
 ```
 mysqldump -u test_user -p nicodb_db users > users_20231021.sql
@@ -71,8 +75,14 @@ mysqldump -u test_user -p nicodb_db users > users_20231021.sql
 SELECT @@foreign_key_checks;
 set foreign_key_checks = 0;
 TRUNCATE TABLE users;
+TRUNCATE TABLE communities;
+TRUNCATE TABLE user_community;
 set foreign_key_checks = 1;
 SELECT @@foreign_key_checks;
+
+DESCRIBE user_community;
+SHOW INDEX FROM user_community;
+ALTER TABLE user_community ADD UNIQUE INDEX uc_unique (user_id, community_id);
 ```
 
 ## ユーザー ID・ユーザー名を DB に登録、すでに DB に登録されている場合は、登録しない

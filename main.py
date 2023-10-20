@@ -18,8 +18,8 @@ def main():
     users = get_users(stream_urls)
 
     # デバック用
-    # for i, user in enumerate(users):
-    #     print(f"{i+1}. {user}")
+    for i, user in enumerate(users):
+        print(f"{i+1}. {user}")
 
     # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
     for user in users:

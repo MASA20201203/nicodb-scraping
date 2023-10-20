@@ -1,5 +1,68 @@
 # ニコ生クリ奨ランキングのデータ取得
 
+## 放送履歴 URL から前日分の配信 URL を取得
+
+### 放送履歴 URL
+
+```
+https://com.nicovideo.jp/community/co1992508
+https://com.nicovideo.jp/live/co1992508
+https://com.nicovideo.jp/live/co1992508?com_header=1&page=1
+https://com.nicovideo.jp/live/co[community_id]?com_header=1
+https://com.nicovideo.jp/live/co[community_id]
+```
+
+### communities
+
+```
+下記テーブル項目を使用する予定なのですが、mysqlでテーブルを作成する場合、どのように作成したらよいでしょうか。
+
+* user_communityテーブル
+id: user_communityID
+user.id: ユーザーID
+community_id: コミュニティID
+created_at: 登録日時
+updated_at: 更新日時
+
+* communitiesテーブル
+id: コミュニティID
+created_at: 登録日時
+updated_at: 更新日時
+
+* usersテーブル
+id: ユーザーID
+name: ユーザー名
+created_at: 登録日時
+updated_at: 更新日時
+
+また、下記を外部キーとして設定したいです。
+
+user_communityテーブルのuser.idとusersテーブルのid
+user_communityテーブルのcommunity.idとcommunitiesテーブルのid
+
+
+```
+
+```
+-- communitiesテーブルの作成
+CREATE TABLE communities (
+    id INT PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- user_communityテーブルの作成
+CREATE TABLE user_community (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    community_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (community_id) REFERENCES communities(id)
+);
+```
+
 ## ユーザー ID・ユーザー名を DB に登録、すでに DB に登録されている場合は、登録しない
 
 ### ChatGPT への質問

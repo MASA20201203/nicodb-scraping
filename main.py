@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import mysql.connector
+from dotenv import load_dotenv
+import os
 
 
 def main():
@@ -16,8 +18,8 @@ def main():
     users = get_users(stream_urls)
 
     # デバック用
-    for i, user in enumerate(users):
-        print(f"{i+1}. {user}")
+    # for i, user in enumerate(users):
+    #     print(f"{i+1}. {user}")
 
     # ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
     for user in users:
@@ -123,12 +125,19 @@ def register_users(user_id, user_name):
     # print("--- user_info ---")
     # print(user_id, user_name)
 
+    # .envファイルから環境変数を読み込む
+    load_dotenv()
+    DB_HOST = os.environ.get('DB_HOST')
+    DB_USER = os.environ.get('DB_USER')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD')
+    DB_NAME = os.environ.get('DB_NAME')
+
     # MySQLへの接続を確立
     cnx = mysql.connector.connect(
-        host='localhost',
-        user='test_user',
-        password='test',
-        database='nicodb_db'
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
     )
 
     # カーソルオブジェクトを作成
@@ -149,6 +158,18 @@ def register_users(user_id, user_name):
     # 接続を閉じる
     cursor.close()
     cnx.close()
+
+
+# コミュニティURLから放送履歴URLを取得
+# get_streaming_history_urls(
+
+
+# 放送履歴URLから前日分の配信URLを取得
+# get_streaming_url_from_history(
+
+
+# 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
+# get_streaming(
 
 
 # --- 処理実行 ---

@@ -26,11 +26,15 @@ def main():
         register_users(user['user_id'], user['user_name'],
                        user['community_id'])
 
-    # コミュニティURLから放送履歴URLを取得
+    # コミュニティIDから放送履歴URLを取得
     streaming_history_urls = get_streaming_history_urls()
 
+    # デバック用
+    for i, streaming_history_url in enumerate(streaming_history_urls):
+        print(f"{i+1}. {streaming_history_url}")
+
     # 放送履歴URLから前日分の配信URLを取得
-    # get_streaming_url_from_history(
+    # streaming_urls = get_streaming_urls(streaming_history_urls）
 
     # 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
     # get_streaming(
@@ -224,29 +228,61 @@ def register_users(user_id: str, user_name: str, community_id: str) -> None:
     cnx.close()
 
 
-# コミュニティURLから放送履歴URLを取得
-def get_streaming_history_urls():
-    """関数の説明タイトル
+def get_streaming_history_urls() -> list:
+    """コミュニティIDから放送履歴URLを取得
 
-    関数についての説明文
-
-    Args:
-        引数の名前 (引数の型): 引数の説明
-        引数の名前 (:obj:`引数の型`, optional): 引数の説明.
+    communitiesテーブル.id（コミュニティID）を用いて、放送履歴URLを取得する
 
     Returns:
-        戻り値の型: 戻り値の説明 (例 : True なら成功, False なら失敗.
+        list: 放送データ取得対象の放送履歴URLのリスト
     """
 
+    # .envファイルから環境変数を読み込む
+    load_dotenv()
+    DB_HOST = os.environ.get('DB_HOST')
+    DB_USER = os.environ.get('DB_USER')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD')
+    DB_NAME = os.environ.get('DB_NAME')
 
-# 放送履歴URLから前日分の配信URLを取得
-# get_streaming_url_from_history(
+    # MySQLへの接続を確立
+    cnx = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    )
+
+    # カーソルオブジェクトを作成
+    cursor = cnx.cursor()
+
+    # communitiesテーブルからidを取得
+    sql = "SELECT id FROM communities"
+    cursor.execute(sql)
+
+    # 取得したIDを保存するためのリスト
+    community_ids = [row[0] for row in cursor.fetchall()]
+
+    # 接続を閉じる
+    cursor.close()
+    cnx.close()
+
+    # デバッグ用
+    # for i, community_id in enumerate(community_ids):
+    #     print(f"{i+1}. {community_id}")
+
+    # 放送履歴URLを格納するリストを作成
+    streaming_history_urls = []
+    streaming_history_url_template = "https://com.nicovideo.jp/live/co"
+    for community_id in community_ids:
+        streaming_history_url = f"{streaming_history_url_template}{community_id}"
+        streaming_history_urls.append(streaming_history_url)
+
+    return streaming_history_urls
 
 
+# 放送履歴URLから前日分の配信URLを取得する
 # 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
 # get_streaming(
-
-
 # --- 処理実行 ---
 if __name__ == "__main__":
     main()

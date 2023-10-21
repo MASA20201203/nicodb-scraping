@@ -34,7 +34,8 @@ def main():
         print(f"{i+1}. {streaming_history_url}")
 
     # 放送履歴URLから前日分の配信URLを取得
-    # streaming_urls = get_streaming_urls(streaming_history_urls）
+    prev_day_streaming_urls = get_prev_day_streaming_urls(
+        streaming_history_urls)
 
     # 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
     # get_streaming(
@@ -231,7 +232,7 @@ def register_users(user_id: str, user_name: str, community_id: str) -> None:
 def get_streaming_history_urls() -> list:
     """コミュニティIDから放送履歴URLを取得
 
-    communitiesテーブル.id（コミュニティID）を用いて、放送履歴URLを取得する
+    communitiesテーブル.id（コミュニティID）を用いて、放送履歴URLを作成する
 
     Returns:
         list: 放送データ取得対象の放送履歴URLのリスト
@@ -281,8 +282,47 @@ def get_streaming_history_urls() -> list:
 
 
 # 放送履歴URLから前日分の配信URLを取得する
+def get_prev_day_streaming_urls(streaming_history_urls) -> list:
+    """前日分の配信URL取得
+
+    放送履歴URLから前日分の配信URLを取得
+
+    Args:
+        streaming_history_urls (list): 放送履歴URLのリスト
+
+    Returns:
+        list: 前日分の配信URLのリスト
+    """
+
+    prev_day_urls = []
+
+    for streaming_history_url in streaming_history_urls:
+        response = requests.get(streaming_history_url)
+        response.encoding = response.apparent_encoding  # エンコーディングを設定
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # 以下のセレクタは仮のものです。実際のHTML構造に合わせて調整する必要があります。
+        prev_day_elements = soup.select('.liveDate')
+
+        print("--- streaming_history_url ---")
+        print(streaming_history_url)
+
+        for element in prev_day_elements:
+            print("--- element ---")
+            print(element)
+            print(element.text.strip())
+            # href = element.get('href')
+            # if href:
+            #     prev_day_urls.append(href)
+
+        break
+
+    return prev_day_urls
+
 # 前日分の配信URLから配信データ（来場者数・コメント数・広告pt・ギフトpt）を取得・登録
-# get_streaming(
+# def get_streaming(
+
+
 # --- 処理実行 ---
 if __name__ == "__main__":
     main()

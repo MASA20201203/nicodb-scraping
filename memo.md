@@ -85,6 +85,39 @@ SHOW INDEX FROM user_community;
 ALTER TABLE user_community ADD UNIQUE INDEX uc_unique (user_id, community_id);
 ```
 
+### コミットメッセージの書き方
+
+```
+https://qiita.com/konatsu_p/items/dfe199ebe3a7d2010b3e
+
+feat: 新しい機能
+fix: バグの修正
+docs: ドキュメントのみの変更
+style: 空白、フォーマット、セミコロン追加など
+refactor: 仕様に影響がないコード改善(リファクタ)
+perf: パフォーマンス向上関連
+test: テスト関連
+chore: ビルド、補助ツール、ライブラリ関連
+```
+
+### Pydoc
+
+```
+https://qiita.com/11ohina017/items/118b3b42b612e527dc1d
+
+http://zaikeyuki.blog96.fc2.com/blog-entry-116.html
+
+```
+
+### 型ヒント
+
+```
+https://docs.python.org/ja/3/library/typing.html
+
+def greeting(name: str) -> str:
+    return 'Hello ' + name
+```
+
 ## ユーザー ID・ユーザー名を DB に登録、すでに DB に登録されている場合は、登録しない
 
 ### ChatGPT への質問

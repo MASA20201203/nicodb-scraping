@@ -27,7 +27,7 @@ def main():
                        user['community_id'])
 
     # コミュニティURLから放送履歴URLを取得
-    # get_streaming_history_urls(
+    streaming_history_urls = get_streaming_history_urls()
 
     # 放送履歴URLから前日分の配信URLを取得
     # get_streaming_url_from_history(
@@ -40,8 +40,14 @@ def main():
 # --- 処理定義 ---
 
 
-# ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
-def get_streaming_urls():
+def get_streaming_urls() -> list:
+    """配信ページのURL取得
+
+    ニコ生ランキングから配信ページのURLを取得（0時、6時、12時、18時、21時？）
+
+    Returns:
+        list: 公式ニコ生ランキングから取得した配信ページのURLのリスト
+    """
 
     # ニコニコ生放送のランキングページURL
     url = "https://live.nicovideo.jp/ranking"
@@ -74,8 +80,17 @@ def get_streaming_urls():
     return stream_urls
 
 
-# 配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
-def get_users(stream_urls):
+def get_users(stream_urls: list) -> list:
+    """配信情報取得
+
+    配信ページのURLからユーザーID・ユーザー名とコミュニティURLを取得
+
+    Args:
+        stream_urls (list): 公式ニコ生ランキングから取得した配信ページのURLのリスト
+
+    Returns:
+        list[dict(str)]: ユーザーid、ユーザー名、コミュニティidを格納した辞書のリスト
+    """
 
     users = []
 
@@ -119,8 +134,17 @@ def get_users(stream_urls):
     return users
 
 
-# ユーザーID・ユーザー名をDBに登録、すでにDBに登録されている場合は、登録しない。ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
-def register_users(user_id, user_name, community_id):
+def register_users(user_id: str, user_name: str, community_id: str) -> None:
+    """ユーザー・コミュニティ情報登録
+
+    ユーザーID・ユーザー名・コミュニティIDをDBに登録、すでにDBに登録されている場合は、登録しない。
+    ユーザーIDが既に登録されているが、ユーザー名が異なる場合は、ユーザー名を更新する
+
+    Args:
+        user_id（str）: ユーザーID
+        user_name（str）: ユーザー名
+        community_id（str）: コミュニティID
+    """
 
     # デバック用
     # print("--- user_info ---")
@@ -201,7 +225,18 @@ def register_users(user_id, user_name, community_id):
 
 
 # コミュニティURLから放送履歴URLを取得
-# get_streaming_history_urls(
+def get_streaming_history_urls():
+    """関数の説明タイトル
+
+    関数についての説明文
+
+    Args:
+        引数の名前 (引数の型): 引数の説明
+        引数の名前 (:obj:`引数の型`, optional): 引数の説明.
+
+    Returns:
+        戻り値の型: 戻り値の説明 (例 : True なら成功, False なら失敗.
+    """
 
 
 # 放送履歴URLから前日分の配信URLを取得

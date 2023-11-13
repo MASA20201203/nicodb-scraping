@@ -27,6 +27,29 @@ https://blog.nicovideo.jp/niconews/146308.html
 
 - 検証 -> ネットワーク -> フィルタ: api
 
+### WSL2 の DB への DBeaver の接続
+
+#### test_user への外部ホストからの接続許可設定
+
+- コマンド
+
+  ```
+  select user, host from mysql.user;
+  show grants for 'test_user'@'localhost';
+  CREATE USER 'test_user'@'%' IDENTIFIED BY 'test';
+  show grants for 'test_user'@'%';
+  GRANT ALL PRIVILEGES ON nicodb_db.* TO 'test_user'@'%';
+  drop user 'test_user'@'%';
+  ```
+
+- 参考
+  - [SOLVED 2022] DBeaver Communication link failure
+    - https://iknowthatnow.com/2021/04/30/dbeaver-error-communication-link-failure/
+  - Host xxx is not allowed to connect to this MySQL server の対応
+    - https://zenn.dev/ryo_kawamata/articles/mysql-connect-error
+  - Host 'xxx.xx.xxx.xxx' is not allowed to connect to this MySQL server
+    - https://stackoverflow.com/questions/1559955/host-xxx-xx-xxx-xxx-is-not-allowed-to-connect-to-this-mysql-server
+
 ## DB のコミュニティ ID を用いて、放送履歴 URL を取得する
 
 ### 放送履歴 URL
